@@ -2,29 +2,31 @@ import mongoose from "mongoose";
 
 const itemSchema = new mongoose.Schema(
   {
-    name: {
+    itemName: {
       type: String,
-      required: [true, "Item name is required"],
+      required: true,
       trim: true,
     },
+
     category: {
       type: String,
-      required: [true, "Category is required"],
+      required: true,
       trim: true,
     },
+
+    quantity: {
+      type: Number,
+      required: true,
+    },
+
     price: {
       type: Number,
-      required: [true, "Price is required"],
-      min: [0, "Price cannot be negative"],
+      required: true,
     },
-    description: {
+
+    materialType: {
       type: String,
-      required: [true, "Description is required"],
-      trim: true,
-    },
-    imageUrl: {
-      type: String,
-      default: "",
+      required: true,
       trim: true,
     },
   },

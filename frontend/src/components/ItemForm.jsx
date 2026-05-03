@@ -1,38 +1,76 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-function ItemForm({ initialValues, onSubmit, submitText }) {
-  const [formData, setFormData] = useState(
-    initialValues || {
-      name: "",
-      category: "",
-      price: "",
-      description: "",
-      imageUrl: "",
+export default function ItemForm({ initialData, onSubmit, buttonText }) {
+  const [formData, setFormData] = useState({
+    itemName: "",
+    category: "",
+    quantity: "",
+    price: "",
+    materialType: "",
+  });
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        itemName: initialData.itemName || "",
+        category: initialData.category || "",
+        quantity: initialData.quantity || "",
+        price: initialData.price || "",
+        materialType: initialData.materialType || "",
+      });
     }
-  );
+  }, [initialData]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     onSubmit({
-      ...formData,
+      itemName: formData.itemName,
+      category: formData.category,
+      quantity: Number(formData.quantity),
       price: Number(formData.price),
+      materialType: formData.materialType,
     });
   };
 
   return (
-    <form className="form-card" onSubmit={handleSubmit}>
-      <h2>{submitText}</h2>
-
+    <form className="item-form" onSubmit={handleSubmit}>
       <label>Item Name</label>
-      <input name="name" value={formData.name} onChange={handleChange} required />
+      <input
+        type="text"
+        name="itemName"
+        value={formData.itemName}
+        onChange={handleChange}
+        placeholder="Enter item name"
+        required
+      />
 
       <label>Category</label>
-      <input name="category" value={formData.category} onChange={handleChange} required />
+      <input
+        type="text"
+        name="category"
+        value={formData.category}
+        onChange={handleChange}
+        placeholder="Enter category"
+        required
+      />
+
+      <label>Quantity</label>
+      <input
+        type="number"
+        name="quantity"
+        value={formData.quantity}
+        onChange={handleChange}
+        placeholder="Enter quantity"
+        required
+      />
 
       <label>Price</label>
       <input
@@ -40,24 +78,21 @@ function ItemForm({ initialValues, onSubmit, submitText }) {
         name="price"
         value={formData.price}
         onChange={handleChange}
+        placeholder="Enter price"
         required
       />
 
-      <label>Description</label>
-      <textarea
-        name="description"
-        rows="4"
-        value={formData.description}
+      <label>Material Type</label>
+      <input
+        type="text"
+        name="materialType"
+        value={formData.materialType}
         onChange={handleChange}
+        placeholder="Enter material type"
         required
       />
 
-      <label>Image URL</label>
-      <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} />
-
-      <button className="btn primary" type="submit">{submitText}</button>
+      <button type="submit">{buttonText}</button>
     </form>
   );
 }
-
-export default ItemForm;

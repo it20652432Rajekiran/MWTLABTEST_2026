@@ -1,21 +1,25 @@
 import { useNavigate } from "react-router-dom";
-import ItemForm from "../components/ItemForm.jsx";
-import { createItem } from "../api/itemApi.js";
+import ItemForm from "../components/ItemForm";
+import { createItem } from "../api/itemApi";
 
-function AddItemPage() {
+export default function AddItemPage() {
   const navigate = useNavigate();
 
-  const handleCreate = async (formData) => {
+  const handleAddItem = async (data) => {
     try {
-      await createItem(formData);
+      await createItem(data);
+      alert("Item added successfully");
       navigate("/");
     } catch (error) {
-      console.error("Failed to create item", error);
-      alert("Failed to create item");
+      alert("Failed to add item");
+      console.error(error);
     }
   };
 
-  return <ItemForm submitText="Add Item" onSubmit={handleCreate} />;
+  return (
+    <div className="page-container">
+      <h2>Add New Item</h2>
+      <ItemForm onSubmit={handleAddItem} buttonText="Add Item" />
+    </div>
+  );
 }
-
-export default AddItemPage;

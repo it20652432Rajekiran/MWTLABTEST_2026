@@ -1,45 +1,52 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import ItemForm from "../components/ItemForm.jsx";
-import { getItemById, updateItem } from "../api/itemApi.js";
+import ItemForm from "../components/ItemForm";
+import { getItemById, updateItem } from "../api/itemApi";
 
-function EditItemPage() {
+export default function EditItemPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [item, setItem] = useState(null);
 
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const { data } = await getItemById(id);
-        setItem(data);
+        const res = await getItemById(id);
+        setItem(res.data);
       } catch (error) {
-        console.error("Failed to fetch item", error);
+        alert("Failed to load item");
+        console.error(error);
       }
     };
 
     fetchItem();
   }, [id]);
 
-  const handleUpdate = async (formData) => {
+  const handleUpdateItem = async (data) => {
     try {
-      await updateItem(id, formData);
+      await updateItem(id, data);
+      alert("Item updated successfully");
       navigate("/");
     } catch (error) {
-      console.error("Failed to update item", error);
       alert("Failed to update item");
+      console.error(error);
     }
   };
 
-  if (!item) return <p>Loading item details...</p>;
-
   return (
-    <ItemForm
-      initialValues={item}
-      submitText="Update Item"
-      onSubmit={handleUpdate}
-    />
+    <div className="page-container">
+      <h2>Edit Item</h2>
+
+      {item ? (
+        <ItemForm
+          initialData={item}
+          onSubmit={handleUpdateItem}
+          buttonText="Update Item"
+        />
+      ) : (
+        <p>Loading...</p>
+      )}
+    </div>
   );
 }
-
-export default EditItemPage;

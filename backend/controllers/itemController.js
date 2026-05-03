@@ -1,7 +1,5 @@
 import Item from "../models/Item.js";
 
-
-
 export const getItems = async (req, res) => {
   try {
     const items = await Item.find().sort({ createdAt: -1 });
@@ -27,7 +25,14 @@ export const getItemById = async (req, res) => {
 
 export const createItem = async (req, res) => {
   try {
-    const newItem = await Item.create(req.body);
+    const newItem = await Item.create({
+      itemName: req.body.itemName,
+      category: req.body.category,
+      quantity: req.body.quantity,
+      price: req.body.price,
+      materialType: req.body.materialType,
+    });
+
     res.status(201).json(newItem);
   } catch (error) {
     res.status(400).json({
@@ -39,10 +44,20 @@ export const createItem = async (req, res) => {
 
 export const updateItem = async (req, res) => {
   try {
-    const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedItem = await Item.findByIdAndUpdate(
+      req.params.id,
+      {
+        itemName: req.body.itemName,
+        category: req.body.category,
+        quantity: req.body.quantity,
+        price: req.body.price,
+        materialType: req.body.materialType,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     if (!updatedItem) {
       return res.status(404).json({ message: "Item not found" });
@@ -70,4 +85,3 @@ export const deleteItem = async (req, res) => {
     res.status(500).json({ message: "Failed to delete item" });
   }
 };
-

@@ -1,58 +1,52 @@
 import { useEffect, useState } from "react";
-import { deleteItem, getItems } from "../api/itemApi.js";
-import ItemCard from "../components/ItemCard.jsx";
+import ItemCard from "../components/ItemCard";
+import { deleteItem, getItems } from "../api/itemApi";
 
-function HomePage() {
+export default function HomePage() {
   const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  const fetchItems = async () => {
+  const loadItems = async () => {
     try {
-      const { data } = await getItems();
-      setItems(data);
+      const res = await getItems();
+      setItems(res.data);
     } catch (error) {
-      console.error("Failed to fetch items", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to delete this item?");
-    if (!confirmed) return;
-
-    try {
-      await deleteItem(id);
-      fetchItems();
-    } catch (error) {
-      console.error("Failed to delete item", error);
+      alert("Failed to load items");
+      console.error(error);
     }
   };
 
   useEffect(() => {
-    fetchItems();
+    loadItems();
   }, []);
 
-  return (
-    <section>
-      <div className="hero">
-        <h1>Item Details</h1>
-        <p>View, manage, edit, and remove items from the inventory.</p>
-      </div>
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this item?");
 
-      {loading ? (
-        <p>Loading items...</p>
-      ) : items.length === 0 ? (
-        <p>No items available. Add a new item from the menu.</p>
-      ) : (
-        <div className="grid">
-          {items.map((item) => (
+    if (!confirmDelete) return;
+
+    try {
+      await deleteItem(id);
+      alert("Item deleted successfully");
+      loadItems();
+    } catch (error) {
+      alert("Failed to delete item");
+      console.error(error);
+    }
+  };
+
+  return (
+    <div className="page-container">
+      <h2>Item List</h2>
+
+      <div className="item-grid">
+        {items.length > 0 ? (
+          items.map((item) => (
             <ItemCard key={item._id} item={item} onDelete={handleDelete} />
-          ))}
-        </div>
-      )}
-    </section>
+          ))
+        ) : (
+          <p>No items found</p>
+        )}
+      </div>
+    </div>
   );
 }
-
-export default HomePage;
